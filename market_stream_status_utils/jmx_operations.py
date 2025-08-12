@@ -18,15 +18,16 @@ JMX_PASSWORD = credentials["JMX_PASSWORD"]
 session = requests.Session()
 
 payload = {
-    "username": "jmxadmin",  # Replace with your actual username
-    "password": "password03"   # Replace with your actual password
+    "username": JMX_USERNAME,
+    "password": JMX_PASSWORD
 }
 
 def jmx_operations(hostnames):
+    failed_hosts = []
     for hostname in hostnames:
         login_url = f"http://{hostname}:8443/login"
         status_url = f"http://{hostname}:8443/management/market-stream/status"
-        try:    
+        try:
             login_response = session.post(login_url, data=payload, allow_redirects=False, timeout=1.2)
 
             if login_response.status_code == 302:
@@ -36,26 +37,19 @@ def jmx_operations(hostnames):
 
                 status_response = session.get(status_url)
 
-                # Check if we successfully accessed the status page
                 if status_response.status_code == 200:
-                    # Print the content of the response (Market Stream Status)
-                    # print(status_response.text)
-                    
                     cache_running = status_response.text.split()[3]
                     cache_health = status_response.text.split()[4]
                     if cache_running == "cacheIsRunning=true":
                         print(f"{GREEN}{cache_running} {cache_health}{RESET}")
                     else:
                         print(f"{RED}{cache_running} {cache_health}{RESET}")
-                    # # Check if the first string matches the required conditions
-                    # if cache_running == "cacheIsRunning=true" or cache_running == "cacheIsRunning=false":
-                    #     break
+                        failed_hosts.append(hostname)
                 else:
                     print(f"Failed to access status page: {status_response.status_code}")
-
             else:
                 print(f"Login failed: {login_response.status_code}")
-                print(login_response.text) 
-                
+                print(login_response.text)
         except requests.exceptions.Timeout:
             print(f"Request timed out for {YELLOW}{hostname}. Continuing to next iteration.")
+    return failed_hosts

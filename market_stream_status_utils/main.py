@@ -37,4 +37,14 @@ if __name__ == "__main__":
         print(f" - {hostname}")
     #DEBUG - end -
 
-    jmx_operations(hostnames)
+    failed_hosts = jmx_operations(hostnames)
+    
+    if failed_hosts:
+        print("\nHosts with cacheIsRunning=false:")
+        for host in failed_hosts:
+            print(f" - {host}")
+    else:
+        print("\nAll hosts returned cacheIsRunning=true.")
+    
+    # command = "systemctl status ppb-fbo-service"
+    # ssh_connect(host, username, password, command, use_sudo=False)
