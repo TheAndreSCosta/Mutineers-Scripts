@@ -1,31 +1,30 @@
 import paramiko
+import subprocess
 import time
 
 def ssh_connect(host, username, password, command, use_sudo=False):
     try:
-        # Create an SSH client
+        # Remove old host key to avoid host key verification errors
+        try:
+            subprocess.run(["ssh-keygen", "-R", host], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        except Exception as e:
+            print(f"Warning: Could not remove old host key for {host}: {e}")
+
         ssh = paramiko.SSHClient()
-        
         # Automatically add the host key if not already known
         ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        
-        # Connect to the host
+
         ssh.connect(hostname=host, username=username, password=password)
-        
-        # If sudo is required, prepend 'sudo -S' to the command and pass the password
+
         if use_sudo:
             command = f"echo {password} | sudo -S {command}"
 
-        # Execute the command
         stdin, stdout, stderr = ssh.exec_command(command)
-        
-        # Read the output and error streams
+
         output = stdout.read().decode()
         error = stderr.read().decode()
-        
         # Close the connection
         ssh.close()
-        
         return output, error
     except Exception as e:
         return None, str(e)
@@ -51,9 +50,9 @@ def restart_routine(host, username, password):
         print(f"Executing command {i + 1}/{len(commands)}: {command} on {host}...")
         output, error = ssh_connect(host, username, password, command, use_sudo=True)
 
-        if output:
-            print("Output:")
-            print(output)
+        # if output:
+        #     print("Output:")
+        #     print(output)
         if error:
             print("Error:")
             print(error)
@@ -61,8 +60,8 @@ def restart_routine(host, username, password):
         # Wait for the stop command to complete before proceeding
         if "stop" in command.lower():
             print("Waiting for the stop command to complete...")
-            time.sleep(5)  # Waiting for the stop command to complete
+            time.sleep(5)  
         # Wait for the start command to allow service initialization
         if "start" in command.lower():
             print("Waiting for the start command to complete...")
-            time.sleep(5)  # Waiting for the start command to complete
+            time.sleep(5)

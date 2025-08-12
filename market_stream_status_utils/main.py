@@ -89,19 +89,35 @@ if __name__ == "__main__":
             print(f"[THREAD] Max retries reached for {host}. Giving up.")
 
 
-    if failed_hosts:
-        print("\nHosts with cacheIsRunning=false:")
-        for host in failed_hosts:
-            print(f" - {host}")
+    az_groups = defaultdict(list)
+    for host in failed_hosts:
+        az = get_az(host)
+        az_groups[az].append(host)
 
+    # DEBUG: Print contents of az_groups
+    print("\nAZ Groups and their hosts:")
+    for az, hosts in az_groups.items():
+        print(f"AZ: {az}")
+        for h in hosts:
+            print(f"  - {h}")
+
+    def start_threads_for_az(hosts, az):
         threads = []
-        for host in failed_hosts:
+        for i, host in enumerate(hosts):
             t = threading.Thread(target=restart_and_check, args=(host,))
             t.start()
             threads.append(t)
-
-        # Wait for all threads to finish
+            if i < len(hosts) - 1:
+                print(f"Waiting 2 minutes before starting next thread in AZ {az}...")
+                time.sleep(120)  # 2 minutes
         for t in threads:
             t.join()
-    else:
-        print("\nAll hosts returned cacheIsRunning=true.")
+
+    # Start threads for each AZ group in parallel
+    az_threads = []
+    for az, hosts in az_groups.items():
+        t = threading.Thread(target=start_threads_for_az, args=(hosts, az))
+        t.start()
+        az_threads.append(t)
+    for t in az_threads:
+        t.join()
