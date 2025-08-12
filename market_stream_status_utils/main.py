@@ -40,11 +40,11 @@ if __name__ == "__main__":
         dev_flavors=dev_flavors
     )
 
-    #DEBUG - start -
-    print("\n Generated Hostnames:")
-    for hostname in hostnames:
-        print(f" - {hostname}")
-    #DEBUG - end -
+    # #DEBUG - start -
+    # print("\n Generated Hostnames:")
+    # for hostname in hostnames:
+    #     print(f" - {hostname}")
+    # #DEBUG - end -
 
 
     failed_hosts = jmx_operations(hostnames)
@@ -60,17 +60,17 @@ if __name__ == "__main__":
     #DEBUG - end -
     
     def restart_and_check(host, max_retries=6):  # 6 retries = 1 hour max with 10min interval
-        print(f"\n[THREAD] Starting restart routine for {host}")
-        try:
-            restart_routine(host, SBV2_USERNAME, SBV2_PASSWORD)
-        except Exception as e:
-            print(f"[THREAD] Error restarting {host}: {e}")
-            return
-
         retries = 0
         while retries < max_retries:
-            print(f"[THREAD] Waiting 10 minutes before checking status for {host} (retry {retries+1}/{max_retries})")
-            time.sleep(600)  # 10 minutes
+            print(f"\n[THREAD] Running restart routine for {host} (retry {retries+1}/{max_retries})")
+            try:
+                restart_routine(host, SBV2_USERNAME, SBV2_PASSWORD)
+            except Exception as e:
+                print(f"[THREAD] Error restarting {host}: {e}")
+
+            wait_minutes = 5 * (retries + 1)
+            print(f"[THREAD] Waiting {wait_minutes} minutes before checking status for {host} (retry {retries+1}/{max_retries})")
+            time.sleep(wait_minutes * 60)
             try:
                 status = jmx_operations([host])
             except Exception as e:

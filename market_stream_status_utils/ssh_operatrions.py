@@ -53,9 +53,9 @@ def restart_routine(host, username, password):
         # if output:
         #     print("Output:")
         #     print(output)
-        if error:
-            print("Error:")
-            print(error)
+        # if error:
+        #     print("Error:")
+        #     print(error)
 
         # Wait for the stop command to complete before proceeding
         if "stop" in command.lower():
