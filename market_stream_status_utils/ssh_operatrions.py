@@ -61,4 +61,8 @@ def restart_routine(host, username, password):
         # Wait for the stop command to complete before proceeding
         if "stop" in command.lower():
             print("Waiting for the stop command to complete...")
-            time.sleep(5)  # Waiting for the stop command to complete)
+            time.sleep(5)  # Waiting for the stop command to complete
+        # Wait for the start command to allow service initialization
+        if "start" in command.lower():
+            print("Waiting for the start command to complete...")
+            time.sleep(5)  # Waiting for the start command to complete

@@ -10,8 +10,6 @@ RESET = "\033[0m"
 
 credentials = load_credentials()
 
-SBV2_USERNAME = credentials["SBV2_USERNAME"]
-SBV2_PASSWORD = credentials["SBV2_PASSWORD"]
 JMX_USERNAME = credentials["JMX_USERNAME"]
 JMX_PASSWORD = credentials["JMX_PASSWORD"]
 
