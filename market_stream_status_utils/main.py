@@ -50,8 +50,7 @@ if __name__ == "__main__":
     failed_hosts = jmx_operations(hostnames)
     
     def get_az(hostname):
-        # Example: extract AZ from hostname, adjust regex as needed
-        # If AZ is always the first 3 chars, e.g., "wv0-fbofd01a-prd..."
+       # Maybe this can be done in a better way
         return hostname.split('-')[0]
     
     #DEBUG - start -
