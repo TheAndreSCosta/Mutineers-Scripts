@@ -1,0 +1,10 @@
+# Ignore Python cache files
+__pycache__/
+*.pyc
+
+# Ignore this specific starter sketch
+market_stream_status_utils/status_basic.py
+
+# Ignore any local environment or config files if any (common names)
+*.env
+*.local

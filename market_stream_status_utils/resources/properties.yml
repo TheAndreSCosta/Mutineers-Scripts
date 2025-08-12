@@ -1,0 +1,38 @@
+settings:
+  node_count: 3
+  indexes:
+    - a
+    - b
+  default_env: dev
+  environments:
+    dev:
+      - "use1"
+      - "use2"
+    prd:
+      - "md"
+      - "vt"
+      - "wv"
+      - "la"
+      - "ks"
+      - "nj"
+      - "nc"
+      - "az"
+      - "co"
+      - "on"
+      - "ky"
+      - "in"
+      - "dc"
+      - "ia"
+      - "pa"
+      - "ct"
+      - "il"
+      - "mi"
+      - "va"
+      - "wy"
+      - "pr"
+      - "mr"
+      - "ma"
+      - "ny"
+      - "tn"
+      - "oh"
+      - "fd"
